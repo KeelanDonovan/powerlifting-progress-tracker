@@ -1,8 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #05070b;
+  --foreground: #f4f7fb;
+  --surface-900: #0b0f17;
+  --surface-800: #111826;
+  --surface-700: #172133;
+  --surface-600: #1f2a40;
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --primary: #ff0054;
+  --primary-soft: rgba(255, 0, 84, 0.14);
+  --secondary: #37f4c2;
+  --secondary-soft: rgba(55, 244, 194, 0.12);
+  --muted: #9aa7c7;
+  --success: #3dd598;
+  --warning: #f5a524;
+  --danger: #f97066;
+  --gradient-radial: radial-gradient(circle at top, rgba(255, 0, 84, 0.25), transparent 60%);
+  --gradient-linear: linear-gradient(120deg, rgba(55, 244, 194, 0.2), rgba(255, 0, 84, 0.05));
 }
 
 @theme inline {
@@ -12,15 +27,54 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    --surface-900: #ffffff;
+    --surface-800: #f1f5f9;
+    --surface-700: #e2e8f0;
+    --surface-600: #cbd5f5;
+    --surface-border: rgba(15, 23, 42, 0.08);
+    --primary: #d0004f;
+    --primary-soft: rgba(208, 0, 79, 0.15);
+    --secondary: #12b886;
+    --secondary-soft: rgba(18, 184, 134, 0.12);
+    --muted: #4c5567;
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background: var(--background);
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--background);
+  background-image: var(--gradient-radial), var(--gradient-linear);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--primary);
+  color: white;
+}
+
+.page-shell {
+  @apply mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:py-12;
+}
+
+.glass-panel {
+  border: 1px solid var(--surface-border);
+  border-radius: 18px;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.05), rgba(8, 10, 16, 0.9));
+  box-shadow: 0 20px 60px rgba(5, 7, 11, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.muted {
+  color: var(--muted);
 }
