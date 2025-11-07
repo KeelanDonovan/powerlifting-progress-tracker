@@ -5,8 +5,8 @@ import "./globals.css";
 import { inter } from "./fonts";
 
 export const metadata: Metadata = {
-  title: "Vercel + Neon",
-  description: "Use Neon with Vercel",
+  title: "Powerlifting Progress Tracker",
+  description: "A web app for powerlifter to log there workout sets and analyze performance.",
 };
 
 export default function RootLayout({
