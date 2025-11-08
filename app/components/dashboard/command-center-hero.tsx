@@ -24,13 +24,13 @@ export function CommandCenterHero({ user }: CommandCenterHeroProps) {
           </p>
         </div>
         <div className="flex flex-col gap-2 text-sm text-white sm:flex-row sm:items-center">
-          <button className="rounded-full border border-secondary/30 bg-secondary/10 px-6 py-3 font-semibold transition hover:border-secondary/60 hover:bg-secondary/20">
+          <button className="cursor-pointer rounded-full border border-secondary/30 bg-secondary/10 px-6 py-3 font-semibold transition hover:border-secondary/60 hover:bg-secondary/20">
             Start New Workout
           </button>
           <form action="/handler/sign-out" method="post">
             <button
               type="submit"
-              className="w-full rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-white/40 hover:text-white sm:w-auto"
+              className="w-full cursor-pointer rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-white/40 hover:text-white sm:w-auto"
             >
               Sign Out
             </button>
