@@ -1,0 +1,56 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String           @id
+  displayName    String?
+  primaryEmail   String?
+  workouts       Workout[]
+  bodyweightLogs BodyweightEntry[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model Workout {
+  id          String        @id @default(uuid())
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  performedOn DateTime      @default(now())
+  title       String?
+  notes       String?
+  sets        WorkoutSet[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([userId, performedOn(sort: Desc)])
+}
+
+model WorkoutSet {
+  id         String   @id @default(uuid())
+  workout    Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  workoutId  String
+  movement   String
+  loadKg     Decimal  @db.Decimal(6, 2)
+  reps       Int
+  rpe        Decimal? @db.Decimal(3, 1)
+  notes      String?
+  sequence   Int
+  createdAt  DateTime @default(now())
+
+  @@unique([workoutId, sequence])
+}
+
+model BodyweightEntry {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  loggedOn  DateTime @default(now())
+  weightKg  Decimal  @db.Decimal(5, 2)
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, loggedOn(sort: Desc)])
+  @@unique([userId, loggedOn])
+}
