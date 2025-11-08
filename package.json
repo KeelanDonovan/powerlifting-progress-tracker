@@ -13,9 +13,11 @@
     "@stackframe/stack": "^2.8.49",
     "dotenv": "^17.2.3",
     "next": "15.5.3",
+    "postgres": "^3.4.7",
     "prisma": "^6.19.0",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
