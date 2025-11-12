@@ -15,7 +15,7 @@ import { sql } from "drizzle-orm";
 export const bodyWeightEntries = pgTable("BodyWeightEntries", {
   id: serial("id").primaryKey(),
   weight_kg: numeric("weight_kg", { precision: 5, scale: 2 }).notNull(),
-  logged_on: date("logged_on", { mode: "date" }).notNull().default(sql`CURRENT_DATE`),
+  logged_on: date("logged_on", { mode: "string" }).notNull().default(sql`CURRENT_DATE`),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -29,7 +29,7 @@ export const workouts = pgTable("Workouts", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   notes: text("notes"),
-  performed_on: date("performed_on", { mode: "date" }).notNull().default(sql`CURRENT_DATE`),
+  performed_on: date("performed_on", { mode: "string" }).notNull().default(sql`CURRENT_DATE`),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
