@@ -14,7 +14,7 @@ import { sql } from "drizzle-orm";
 // BodyWeightEntries Table
 export const bodyWeightEntries = pgTable("BodyWeightEntries", {
   id: serial("id").primaryKey(),
-  weight_kg: numeric("weight_kg", { precision: 4, scale: 2 }).notNull(),
+  weight_kg: numeric("weight_kg", { precision: 5, scale: 2 }).notNull(),
   logged_on: date("logged_on", { mode: "date" }).notNull().default(sql`CURRENT_DATE`),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
