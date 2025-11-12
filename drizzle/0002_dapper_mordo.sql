@@ -1,0 +1,1 @@
+ALTER TABLE "BodyWeightEntries" ALTER COLUMN "weight_kg" SET DATA TYPE numeric(5, 2);

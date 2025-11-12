@@ -15,6 +15,13 @@
       "when": 1762911896589,
       "tag": "0001_demonic_lady_mastermind",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762919405133,
+      "tag": "0002_dapper_mordo",
+      "breakpoints": true
     }
   ]
 }
