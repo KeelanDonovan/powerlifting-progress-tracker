@@ -6,7 +6,7 @@ import { addBodyWeightEntry } from "@/app/actions/bodyweightEntryAction";
 
 export function BodyWeightEntryForm() {
   const [weight, setWeight] = useState("");
-  const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [date, setDate] = useState(() => new Date().toLocaleDateString('en-CA').slice(0, 10));
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -18,7 +18,7 @@ export function BodyWeightEntryForm() {
 
     startTransition(async () => {
       try {
-        await addBodyWeightEntry(weight, new Date(date));
+        await addBodyWeightEntry(weight, date);
         setSuccess("Entry saved.");
         setWeight("");
       } catch (err) {
