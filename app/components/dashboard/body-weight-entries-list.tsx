@@ -2,7 +2,10 @@
 
 import { FormEvent, useEffect, useState, useTransition } from "react";
 
-import { editBodyWeightEntry } from "@/app/actions/bodyweightEntryAction";
+import {
+  editBodyWeightEntry,
+  deleteBodyWeightEntry,
+} from "@/app/actions/bodyweightEntryAction";
 import { BodyWeightEntry } from "@/app/types/bodyWeightEntriesType";
 
 const MAX_VISIBLE_ENTRIES = 30;
@@ -40,7 +43,8 @@ export function BodyWeightEntriesList({ entries }: BodyWeightEntriesListProps) {
       <div className="glass-panel flex h-full flex-col justify-center rounded-xl border border-white/5 bg-slate-900/40 p-6 text-center text-slate-300">
         <p className="text-lg font-semibold text-white">No entries yet</p>
         <p className="mt-2 text-sm text-slate-400">
-          Start logging your weight to build a trendline and highlight progress over time.
+          Start logging your weight to build a trendline and highlight progress
+          over time.
         </p>
       </div>
     );
@@ -74,7 +78,10 @@ export function BodyWeightEntriesList({ entries }: BodyWeightEntriesListProps) {
     const dateValue = formValues.date.trim();
 
     if (!weightValue || !dateValue) {
-      setAlert({ type: "error", text: "Enter both weight and date to update the entry." });
+      setAlert({
+        type: "error",
+        text: "Enter both weight and date to update the entry.",
+      });
       return;
     }
 
@@ -84,7 +91,9 @@ export function BodyWeightEntriesList({ entries }: BodyWeightEntriesListProps) {
         await editBodyWeightEntry(editingEntryId, weightValue, dateValue);
         setEntryList((prev) =>
           prev.map((entry) =>
-            entry.id === editingEntryId ? { ...entry, weight_kg: weightValue, logged_on: dateValue } : entry
+            entry.id === editingEntryId
+              ? { ...entry, weight_kg: weightValue, logged_on: dateValue }
+              : entry
           )
         );
         setAlert({ type: "success", text: "Entry updated." });
@@ -93,7 +102,31 @@ export function BodyWeightEntriesList({ entries }: BodyWeightEntriesListProps) {
       } catch (error) {
         setAlert({
           type: "error",
-          text: error instanceof Error ? error.message : "Failed to update entry.",
+          text:
+            error instanceof Error ? error.message : "Failed to update entry.",
+        });
+      }
+    });
+  };
+
+  const handleDelete = (entryId: number) => {
+    if (!window.confirm("Delete this entry?")) return;
+
+    setAlert(null);
+    startTransition(async () => {
+      try {
+        await deleteBodyWeightEntry(entryId);
+        setEntryList((prev) => prev.filter((e) => e.id !== entryId));
+        if (editingEntryId === entryId) {
+          setEditingEntryId(null);
+          setFormValues({ weight: "", date: "" });
+        }
+        setAlert({ type: "success", text: "Entry deleted." });
+      } catch (error) {
+        setAlert({
+          type: "error",
+          text:
+            error instanceof Error ? error.message : "Failed to delete entry.",
         });
       }
     });
@@ -108,7 +141,9 @@ export function BodyWeightEntriesList({ entries }: BodyWeightEntriesListProps) {
             Latest {Math.min(entryList.length, MAX_VISIBLE_ENTRIES)} logs
           </p>
         </div>
-        <span className="text-xs font-semibold text-slate-400">{entryList.length} total</span>
+        <span className="text-xs font-semibold text-slate-400">
+          {entryList.length} total
+        </span>
       </div>
       {alert && (
         <div
@@ -136,19 +171,37 @@ export function BodyWeightEntriesList({ entries }: BodyWeightEntriesListProps) {
                   </p>
                 </div>
                 {!isEditing && (
-                  <button
-                    type="button"
-                    onClick={() => startEditing(entry)}
-                    className="self-start rounded-full border border-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-secondary/60 hover:text-secondary"
-                  >
-                    Edit
-                  </button>
+                  <div className="flex items-center gap-2 self-start md:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(entry.id)}
+                      className="rounded-full border border-red-500/40 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-red-200 transition hover:border-red-500/60 hover:text-red-300 disabled:opacity-50"
+                      disabled={isPending}
+                      aria-label="Delete entry"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => startEditing(entry)}
+                      className="rounded-full border border-white/20 px-4 py-1 text-xs font-semibold uppercase tracking-wide text-white transition hover:border-secondary/60 hover:text-secondary"
+                      disabled={isPending}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 )}
               </div>
               {isEditing && (
-                <form onSubmit={handleUpdate} className="mt-3 grid gap-3 text-xs text-slate-200 md:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]">
+                <form
+                  onSubmit={handleUpdate}
+                  className="mt-3 grid gap-3 text-xs text-slate-200 md:grid-cols-[repeat(auto-fit,minmax(160px,1fr))]"
+                >
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`weight-${entry.id}`} className="uppercase tracking-[0.3em] text-slate-500">
+                    <label
+                      htmlFor={`weight-${entry.id}`}
+                      className="uppercase tracking-[0.3em] text-slate-500"
+                    >
                       Weight (kg)
                     </label>
                     <input
@@ -158,21 +211,34 @@ export function BodyWeightEntriesList({ entries }: BodyWeightEntriesListProps) {
                       min="0"
                       inputMode="decimal"
                       value={formValues.weight}
-                      onChange={(event) => setFormValues((current) => ({ ...current, weight: event.target.value }))}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          weight: event.target.value,
+                        }))
+                      }
                       className="rounded-md border border-white/10 bg-white/5 p-2 text-sm text-white focus:border-secondary focus:outline-none"
                       required
                       disabled={isPending}
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label htmlFor={`logged-on-${entry.id}`} className="uppercase tracking-[0.3em] text-slate-500">
+                    <label
+                      htmlFor={`logged-on-${entry.id}`}
+                      className="uppercase tracking-[0.3em] text-slate-500"
+                    >
                       Date
                     </label>
                     <input
                       id={`logged-on-${entry.id}`}
                       type="date"
                       value={formValues.date}
-                      onChange={(event) => setFormValues((current) => ({ ...current, date: event.target.value }))}
+                      onChange={(event) =>
+                        setFormValues((current) => ({
+                          ...current,
+                          date: event.target.value,
+                        }))
+                      }
                       className="rounded-md border border-white/10 bg-white/5 p-2 text-sm text-white focus:border-secondary focus:outline-none"
                       required
                       disabled={isPending}
