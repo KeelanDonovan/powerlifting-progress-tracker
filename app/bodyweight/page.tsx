@@ -31,8 +31,10 @@ export default async function BodyWeightPage() {
             </p>
           </div>
         </header>
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,360px)_1fr]">
+        <section>
           <BodyWeightEntryForm />
+        </section>
+        <section>
           <BodyWeightEntriesList entries={entries} />
         </section>
       </main>
