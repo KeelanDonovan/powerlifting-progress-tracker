@@ -183,7 +183,7 @@ export function BodyweightChart({ entries, height = 320 }: BodyweightChartProps)
             axisLine={false}
             tickMargin={8}
             stroke="#94a3b8"
-            interval={0}
+            minTickGap={16}
             label={{
               value: "Date",
               position: "insideBottom",

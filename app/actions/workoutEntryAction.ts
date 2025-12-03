@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
 import { workouts, workoutSets } from "@/lib/schema";
-import { WorkoutEntry } from "@/app/types/workoutEntriesType";
+import { WorkoutEntry, E1RMPoint } from "@/app/types/workoutEntriesType";
 import { stackServerApp } from "@/stack/server";
 
 const DASHBOARD_PATH = "/";
@@ -103,6 +103,63 @@ const assertSets = (sets: WorkoutSetInput[]): SanitizedSet[] => {
     rpe: assertRpe(set.rpe, index),
     notes: assertNotes(set.notes),
   }));
+};
+
+export const getWorkoutExercises = async (): Promise<string[]> => {
+  const userId = await requireUserId();
+  const rows = await db
+    .selectDistinct({ exercise: workoutSets.exercise })
+    .from(workoutSets)
+    .where(eq(workoutSets.user_id, userId));
+
+  return rows
+    .map((row) => row.exercise?.trim())
+    .filter((val): val is string => Boolean(val))
+    .sort((a, b) => a.localeCompare(b));
+};
+
+const calculateE1RM = (loadKg: string, reps: number) => {
+  const load = Number(loadKg);
+  if (!Number.isFinite(load) || !Number.isFinite(reps) || reps <= 0) return null;
+  const denom = 1 - reps * 0.0333;
+  if (denom <= 0) return null;
+  return load / denom;
+};
+
+export const getExerciseE1RMSeries = async (exercise: string): Promise<E1RMPoint[]> => {
+  const userId = await requireUserId();
+  const sanitizedExercise = exercise.trim();
+  if (!sanitizedExercise) throw new Error("Exercise is required.");
+
+  const rows = await db
+    .select({
+      date: workouts.performed_on,
+      load: workoutSets.load_kg,
+      reps: workoutSets.reps,
+    })
+    .from(workoutSets)
+    .innerJoin(workouts, eq(workoutSets.workout_id, workouts.id))
+    .where(
+      and(
+        eq(workoutSets.user_id, userId),
+        eq(workouts.user_id, userId),
+        eq(workoutSets.exercise, sanitizedExercise)
+      )
+    );
+
+  const bestByDate = new Map<string, number>();
+  for (const row of rows) {
+    const e1rm = calculateE1RM(String(row.load), row.reps);
+    if (!e1rm) continue;
+    const currentBest = bestByDate.get(row.date);
+    if (!currentBest || e1rm > currentBest) {
+      bestByDate.set(row.date, e1rm);
+    }
+  }
+
+  return Array.from(bestByDate.entries())
+    .map(([date, e1rm]) => ({ date, e1rm }))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 
 export const addWorkoutEntry = async (

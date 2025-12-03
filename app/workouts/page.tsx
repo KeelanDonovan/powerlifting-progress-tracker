@@ -1,13 +1,23 @@
 import Link from "next/link";
 
-import { getWorkoutEntries } from "@/app/actions/workoutEntryAction";
+import {
+  getWorkoutEntries,
+  getWorkoutExercises,
+  getExerciseE1RMSeries,
+} from "@/app/actions/workoutEntryAction";
 import { WorkoutEntryForm } from "@/app/components/dashboard/workout-entry-form";
 import { WorkoutEntryList } from "@/app/components/dashboard/workout-entry-list";
+import { E1RMChart } from "@/app/components/dashboard/e1rm-chart";
 import { stackServerApp } from "@/stack/server";
 
 export default async function WorkoutsPage() {
   const user = await stackServerApp.getUser({ or: "redirect" });
   const workouts = await getWorkoutEntries();
+  const exercises = await getWorkoutExercises();
+  const initialSeries: Record<string, { date: string; e1rm: number }[]> = {};
+  for (const ex of exercises.slice(0, 3)) {
+    initialSeries[ex] = await getExerciseE1RMSeries(ex);
+  }
   const signedInLabel = user.displayName ?? user.primaryEmail ?? "Athlete";
 
   return (
@@ -32,6 +42,10 @@ export default async function WorkoutsPage() {
 
         <section>
           <WorkoutEntryForm />
+        </section>
+
+        <section>
+          <E1RMChart exercises={exercises} initialSeries={initialSeries} />
         </section>
 
         <section>
