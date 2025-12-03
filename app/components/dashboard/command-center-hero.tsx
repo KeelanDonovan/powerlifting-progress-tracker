@@ -25,7 +25,7 @@ export function CommandCenterHero({ user }: CommandCenterHeroProps) {
           </form>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">Command Center</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">Dashboard</h1>
           <p className="text-xs uppercase tracking-[0.3em] text-slate-500">
             Signed in as <span className="text-white">{signedInLabel}</span>
           </p>
