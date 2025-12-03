@@ -148,9 +148,6 @@ export function BodyweightChart({ entries, height = 320 }: BodyweightChartProps)
             onChange={(event) => setMaxWeight(event.target.value)}
             className="w-24 rounded-md border border-white/10 bg-slate-900/70 px-2 py-1 text-xs text-white focus:border-secondary focus:outline-none"
           />
-          <span className="text-slate-500">
-            auto: {autoLower.toFixed(1)} – {autoUpper.toFixed(1)}
-          </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="uppercase tracking-[0.3em] text-slate-500">Date Range</span>
