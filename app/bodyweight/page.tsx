@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BodyWeightEntryForm } from "@/app/components/dashboard/body-weight-entry-form";
 import { BodyWeightEntriesList } from "@/app/components/dashboard/body-weight-entries-list";
 import { getBodyWeightEntries } from "@/app/actions/bodyweightEntryAction";
+import { BodyweightChart } from "@/app/components/dashboard/bodyweight-chart";
 import { stackServerApp } from "@/stack/server";
 
 export default async function BodyWeightPage() {
@@ -33,6 +34,13 @@ export default async function BodyWeightPage() {
         </header>
         <section>
           <BodyWeightEntryForm />
+        </section>
+        <section className="space-y-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Trendline</p>
+            <h2 className="text-lg font-semibold text-white">Bodyweight over time</h2>
+          </div>
+          <BodyweightChart entries={entries} />
         </section>
         <section>
           <BodyWeightEntriesList entries={entries} />
